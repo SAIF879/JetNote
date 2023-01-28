@@ -31,8 +31,8 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun NoteScreen( notes : List<Note> , onAddNote : (Note) -> Unit , onRemoveNote : (Note) -> Unit){
-    var title by remember{
+fun NoteScreen(notes: List<Note>, onAddNote: (Note) -> Unit, onRemoveNote: (Note) -> Unit) {
+    var title by remember {
         mutableStateOf("")
     }
     var discription by remember {
@@ -40,31 +40,50 @@ fun NoteScreen( notes : List<Note> , onAddNote : (Note) -> Unit , onRemoveNote :
     }
 
     Column(modifier = Modifier.padding(6.dp)) {
-     TopAppBar(
-         title = { Text(text = stringResource(id = R.string.app_name))},
-         actions = { Icon(imageVector = Icons.Rounded.Notifications, contentDescription ="topAppBar_Icon" )},
-         backgroundColor = Color(0xFF2F6997)
-     )
-    // content
-   Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-       NoteInputText(modifier = Modifier.padding(top = 9.dp , bottom = 8.dp), text =title , label = "Title", onTextChange ={
-           title = it
-       })
-       NoteInputText(modifier = Modifier.padding(top = 9.dp , bottom = 8.dp), text =discription , label = "Add a note", onTextChange = {
-           discription = it
-       })
-       NoteButton(modifier =Modifier , text ="save" , onClick = {
-                if (title.isNotEmpty() && discription.isNotEmpty()){
+        TopAppBar(
+            title = { Text(text = stringResource(id = R.string.app_name)) },
+            actions = {
+                Icon(
+                    imageVector = Icons.Rounded.Notifications,
+                    contentDescription = "topAppBar_Icon"
+                )
+            },
+            backgroundColor = Color(0xFF2F6997)
+        )
+        // content
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            NoteInputText(
+                modifier = Modifier.padding(top = 9.dp, bottom = 8.dp),
+                text = title,
+                label = "Title",
+                onTextChange = {
+                    title = it
+                })
+            NoteInputText(
+                modifier = Modifier.padding(top = 9.dp, bottom = 8.dp),
+                text = discription,
+                label = "Add a note",
+                onTextChange = {
+                    discription = it
+                })
+            NoteButton(modifier = Modifier, text = "save", onClick = {
+                if (title.isNotEmpty() && discription.isNotEmpty()) {
+                    onAddNote(Note(title = title, discription = discription))
                     title = ""
                     discription = ""
                 }
-       })
-   }  
+            })
+        }
    
    Divider()
         LazyColumn{
             items(notes){note->
-           NoteRow(note = note, onNoteClicked ={} )
+           NoteRow(note = note, onNoteClicked ={
+               onRemoveNote(note)
+           } )
 
             }
         }
@@ -86,7 +105,7 @@ fun NoteRow(
             color = Color(0xFFDFE6EB) , elevation = 6.dp
         ){
         Column(modifier = Modifier
-            .clickable { }
+            .clickable {onNoteClicked(note) }
             .padding(horizontal = 14.dp, vertical = 6.dp), horizontalAlignment = Alignment.Start) {
             Text(text = note.title , style = MaterialTheme.typography.subtitle2)
             Text(text = note.discription, style = MaterialTheme.typography.subtitle2)
