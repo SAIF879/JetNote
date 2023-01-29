@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetnote.data.NoteData
 import com.example.jetnote.model.Note
 import com.example.jetnote.screen.NoteScreen
+import com.example.jetnote.screen.NoteViewModel
 import com.example.jetnote.ui.theme.JetNoteTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,16 +32,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
                 ) {
-                    val notes = remember {
-                     mutableStateListOf<Note>()
-                    }
-                       NoteScreen(notes = notes, onAddNote = {notes.add(it)}, onRemoveNote ={notes.remove(it)} )
+                   NoteApp()
+
 
 
                 }
             }
         }
     }
+}
+
+@Composable
+fun NoteApp(noteViewModel: NoteViewModel= viewModel()){
+    val noteList =  noteViewModel.getAllNotes()
+    NoteScreen(notes = noteList, onAddNote = {noteViewModel.addNote(it)}, onRemoveNote ={noteViewModel.removeNote(it)} )
 }
 
 
